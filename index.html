@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Space Themed List Maker</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #000428, #004e92);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    /* Container */
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    /* Input Field */
+    #item-input {
+      width: 80%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    /* Buttons */
+    button {
+      background: #1e3c72;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #162447;
+    }
+
+    /* List Items */
+    .list-container {
+      margin-top: 15px;
+      text-align: left;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .list-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .list-item span {
+      flex: 1;
+    }
+
+    .delete-btn {
+      background: #ff4d4d;
+      border: none;
+      color: white;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background: #d32f2f;
+    }
+
+    /* Scroll Bar Styling */
+    .list-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .list-container::-webkit-scrollbar-thumb {
+      background: #1e3c72;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌌Isaac's Little List Maker</h1>
+    <input type="text" id="item-input" placeholder="Enter a list item...">
+    <div>
+      <button id="add-btn">Add</button>
+      <button id="export-btn">Export List</button>
+    </div>
+    <div class="list-container" id="list-container">
+      <!-- Items will be dynamically added here -->
+    </div>
+  </div>
+
+  <script>
+    // Select DOM elements
+    const inputField = document.getElementById('item-input');
+    const addButton = document.getElementById('add-btn');
+    const exportButton = document.getElementById('export-btn');
+    const listContainer = document.getElementById('list-container');
+
+    // Array to store list items
+    let listItems = [];
+
+    // Add item to the list
+    const addItem = () => {
+      const itemText = inputField.value.trim();
+      if (itemText) {
+        listItems.push(itemText);
+        renderList();
+        inputField.value = ''; // Clear input field
+      }
+    };
+
+    // Delete item from the list
+    const deleteItem = (index) => {
+      listItems.splice(index, 1);
+      renderList();
+    };
+
+    // Render the list items
+    const renderList = () => {
+      listContainer.innerHTML = '';
+      listItems.forEach((item, index) => {
+        const listItem = document.createElement('div');
+        listItem.className = 'list-item';
+        listItem.innerHTML = `
+          <span>${item}</span>
+          <button class="delete-btn" onclick="deleteItem(${index})">&times;</button>
+        `;
+        listContainer.appendChild(listItem);
+      });
+    };
+
+    // Export list to a downloadable file
+    const exportList = () => {
+      const blob = new Blob([listItems.join('\n')], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'my-space-list.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    // Event listeners
+    addButton.addEventListener('click', addItem);
+    exportButton.addEventListener('click', exportList);
+    inputField.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addItem();
+    });
+  </script>
+</body>
+</html>
